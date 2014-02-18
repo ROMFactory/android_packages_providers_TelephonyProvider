@@ -74,7 +74,11 @@ public class BlacklistProvider extends ContentProvider {
             db.execSQL("CREATE TABLE " + BLACKLIST_TABLE +
                 "(_id INTEGER PRIMARY KEY," +
                     "number TEXT," +
+<<<<<<< HEAD
                     "normalized_number TEXT," +
+=======
+                    "normalized_number TEXT UNIQUE," +
+>>>>>>> 2fe9109... [5/6] TelephonyProvider: Blacklist support
                     "is_regex INTEGER," +
                     "phone INTEGER DEFAULT 0," +
                     "message INTEGER DEFAULT 0);");
@@ -82,6 +86,7 @@ public class BlacklistProvider extends ContentProvider {
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+<<<<<<< HEAD
             if (oldVersion < 2) {
                 // drop the uniqueness constraint that was present on the DB in V1
                 db.execSQL("ALTER TABLE " + BLACKLIST_TABLE +
@@ -90,6 +95,9 @@ public class BlacklistProvider extends ContentProvider {
                 db.execSQL("INSERT INTO " + BLACKLIST_TABLE +
                         " SELECT * FROM " + BLACKLIST_TABLE + "_old;");
             }
+=======
+            // won't happen, we're at version 1
+>>>>>>> 2fe9109... [5/6] TelephonyProvider: Blacklist support
         }
     }
 
@@ -212,6 +220,7 @@ public class BlacklistProvider extends ContentProvider {
 
         switch (match) {
             case BL_ALL:
+<<<<<<< HEAD
                 break;
             case BL_ID:
                 if (where != null || whereArgs != null) {
@@ -228,12 +237,25 @@ public class BlacklistProvider extends ContentProvider {
                 }
                 where = COLUMN_NORMALIZED + " = ?";
                 whereArgs = new String[] { normalizeNumber(uri.getLastPathSegment()) };
+=======
+                count = db.delete(BLACKLIST_TABLE, where, whereArgs);
+                break;
+            case BL_ID:
+                count = db.delete(BLACKLIST_TABLE, Blacklist._ID + " = ?",
+                        new String[] { uri.getLastPathSegment() });
+            case BL_NUMBER:
+                count = db.delete(BLACKLIST_TABLE, COLUMN_NORMALIZED + " = ?",
+                        new String[] { normalizeNumber(uri.getLastPathSegment()) });
+>>>>>>> 2fe9109... [5/6] TelephonyProvider: Blacklist support
                 break;
             default:
                 throw new UnsupportedOperationException("Cannot delete that URI: " + uri);
         }
 
+<<<<<<< HEAD
         count = db.delete(BLACKLIST_TABLE, where, whereArgs);
+=======
+>>>>>>> 2fe9109... [5/6] TelephonyProvider: Blacklist support
         if (DEBUG) Log.d(TAG, "delete result count " + count);
 
         if (count > 0) {
